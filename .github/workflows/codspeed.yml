@@ -1,0 +1,32 @@
+name: CodSpeed
+'on':
+  push:
+    branches:
+    - main
+  pull_request: null
+  workflow_dispatch: null
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  codspeed:
+    name: Run benchmarks
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+      with:
+        persist-credentials: false
+    - name: Setup rust toolchain, cache and cargo-codspeed binary
+      uses: moonrepo/setup-rust@ede6de059f8046a5e236c94046823e2af11ca670
+      with:
+        channel: stable
+        cache-target: release
+        bins: cargo-codspeed
+    - name: Build the benchmark target(s)
+      run: cargo codspeed build
+    - name: Run the benchmarks
+      uses: CodSpeedHQ/action@6fa523dc3006ff6c4dc2cabbd0b3384e9bd3fb06
+      with:
+        upload-url: ${{ secrets.CODSPEED_FRANCOIS_DEV_UPLOAD_URL }}
+        mode: simulation
+        run: cargo codspeed run

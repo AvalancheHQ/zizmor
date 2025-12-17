@@ -85,3 +85,8 @@ fst.workspace = true
 assert_cmd.workspace = true
 insta.workspace = true
 serde_json_path.workspace = true
+codspeed-criterion-compat.workspace = true
+
+[[bench]]
+name = "zizmor_bench"
+harness = false
