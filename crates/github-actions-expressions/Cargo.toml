@@ -23,3 +23,8 @@ subfeature.workspace = true
 
 [dev-dependencies]
 pretty_assertions.workspace = true
+criterion.workspace = true
+
+[[bench]]
+name = "expression_parsing"
+harness = false
