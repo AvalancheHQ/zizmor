@@ -9,7 +9,9 @@ on:
   # performance analysis in order to generate initial data.
   workflow_dispatch:
 
-permissions: {}
+permissions: # optional for public repositories
+  contents: read # required for actions/checkout
+  id-token: write # required for OIDC authentication with CodSpeed
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -34,14 +36,13 @@ jobs:
       - name: Build zizmor (release)
         run: cargo build --release
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Run the benchmarks
         uses: CodSpeedHQ/action@db35df748deb45fdef0960669f57d627c1956c30 # v4.13.1
         with:
           mode: walltime
           run: make bench
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Setup tmate session
-        if: always()
-        uses: mxschmitt/action-tmate@v3
+          runner-version: "branch:cod-2518-bug-crash-on-performance-collection-invalidperfeventsize"
+          upload-url: ${{ secrets.CODSPEED_STAGING_UPLOAD_URL }}
